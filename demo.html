@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta
+            name="viewport"
+            content=
+                "width=device-width,
+                user-scalable=yes,
+                initial-scale=1.0,
+                maximum-scale=10, minimum-scale=1.0">
+
+        <title>Paginação dinâmica - por LipESprY</title>
+
+        <link rel="stylesheet" type="text/css" href="lsi-busca/estilo.css">
+        <script src="lsi-busca/script.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="lsi-loading/estilo.css">
+        <script src="lsi-loading/script.js"></script>
+
+        <style type="text/css">
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <input type="text" id="inpBusca">
+        <div id="buscaAlvo"></div>
+        <div id="lsi-loading"></div>
+
+    </body>
+    <script>
+        var lsiloading = LSILoading('#lsi-loading');
+
+        LSIBusca().prep({
+            webservice: 'webservice.php',
+            metodo: 'post',
+            alvo: document.getElementById('buscaAlvo'),
+            campo: document.getElementById('inpBusca'),
+            atraso: 1000,
+            render: function(dados){
+                let resposta = document.createElement('p');
+                resposta.innerHTML = dados;
+                this.criarItem().appendChild(resposta);
+            },
+            antesEnviar: function(){
+                lsiloading.mostra();
+            },
+            aoConcluir: function(){
+                lsiloading.esconde();
+            }
+        });
+    </script>
+</html>
+
+        <!-- <div class="lsi-busca">
+            <div>
+                <div class="lsi-busca-item">
+                    <p>Felipe Moraes de Oliveira</p>
+                    <p>Bom Jesus do Itabapoana/RJ</p>
+                    <p>felipemdeoliveira@live.com</p>
+                    <p>(22)99822-4902 / (22)98832-1151</p>
+                </div>
+            </div>
+            <div>
+                <div class="lsi-busca-item">
+                    <p>Felipe Moraes de Oliveira</p>
+                    <p>(22)99822-4902 / (22)98832-1151</p>
+                </div>
+            </div>
+            <div>
+                <div class="lsi-busca-item">
+                    <p>Felipe Moraes de Oliveira</p>
+                    <p>Bom Jesus do Itabapoana/RJ</p>
+                    <p>felipemdeoliveira@live.com</p>
+                    <p>(22)99822-4902 / (22)98832-1151</p>
+                </div>
+            </div>
+            <div>
+                <div class="lsi-busca-item">
+                    <p>Felipe Moraes de Oliveira</p>
+                    <p>Bom Jesus do Itabapoana/RJ</p>
+                    <p>felipemdeoliveira@live.com</p>
+                    <p>(22)99822-4902 / (22)98832-1151</p>
+                </div>
+            </div>
+        </div> -->
