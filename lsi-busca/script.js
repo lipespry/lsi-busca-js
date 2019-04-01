@@ -153,7 +153,22 @@ var LSIBusca = (function(){
 
                     inst.ajax.send();
                 } else {
-                    //
+                    inst.ajax.open(
+                        inst.metodo,
+                        (
+                            inst.webservice
+                            +((/\?/).test(inst.webservice) ? '&' : '?')
+                            +'_='+(new Date).getTime()
+                        )
+                    );
+                    inst.ajax.setRequestHeader(
+                        'Content-Type',
+                        'application/x-www-form-urlencoded'
+                    );
+                    inst.ajax.send(
+                        'b='+inst.termo
+                        +'&pg='+inst.pagina
+                    );
                 }
             } else
                 inst.limpaBusca();

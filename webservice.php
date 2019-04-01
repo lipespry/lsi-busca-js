@@ -2,7 +2,7 @@
 
 //sleep(5);
 //echo 'Resposta do servidor';
-if (empty($_GET['b']) || strlen($_GET['b']) < 4)
+if (empty($_POST['b']) || strlen($_POST['b']) < 4)
     die(json_encode(
         array(
             'sucesso' => false,
@@ -13,12 +13,12 @@ if (empty($_GET['b']) || strlen($_GET['b']) < 4)
     ));
 
 try {
-    if (isset($_GET['pg']) && ctype_digit($_GET['pg']))
-        $pagina = (int) $_GET['pg'];
+    if (isset($_POST['pg']) && ctype_digit($_POST['pg']))
+        $pagina = (int) $_POST['pg'];
     else
         $pagina = 1;
 
-    $termoBusca = $_GET['b'];
+    $termoBusca = $_POST['b'];
     $limite = 5;
 
     $pdo = new \PDO(
