@@ -33,7 +33,6 @@ var LSIBusca = (function(){
         this.antesEnviar = function(){}
         this.aoConcluir = function(){}
 
-
         // expandindo o escopo
         let inst = this;
 
@@ -45,9 +44,13 @@ var LSIBusca = (function(){
                     console.log('Requisição abortada!');
                 } else
                 if (inst.ajax.status === 200) {
-                    // validar resposta
-                    // renderizar
-                    inst.popula(inst.ajax.responseText);
+                    let resposta = JSON.parse(inst.ajax.responseText);
+                    if (resposta.sucesso === true) {
+                        inst.paginas = resposta.resultado.paginas;
+                        inst.popula(resposta.resultado.dados);
+                    } else {
+                        // erro
+                    }
                 } else {
                     // erro
                 }
@@ -57,6 +60,23 @@ var LSIBusca = (function(){
 
         // inicialização do objeto
         this.html = {}
+
+        this.iniciaBusca = function(buscaTermo)
+        {
+            inst.pagina = 1;
+            inst.termo = buscaTermo;
+            inst.buscar();
+        }
+
+        this.proxPagina = function()
+        {
+            if (inst.pagina < inst.paginas) {
+                inst.pagina++;
+                inst.buscar();
+            } else {
+                // erro
+            }
+        }
 
         this.prep = function(opcoes)
         {
@@ -95,7 +115,7 @@ var LSIBusca = (function(){
 
                     inputTimeout = setTimeout(
                         function(){
-                            inst.buscar(input.value);
+                            inst.iniciaBusca(input.value);
                         },
                         inst.atraso
                     );
@@ -106,23 +126,35 @@ var LSIBusca = (function(){
             return inst;
         }
 
-        this.buscar = function(termoBusca)
+        this.buscar = function()
         {
             if (inst.ajax.readyState !== 0 && inst.ajax.readyState != 4)
                 inst.ajax.abort();
 
-            if (termoBusca.length >= inst.minlength) {
+            if (inst.termo.length >= inst.minlength) {
                 inst.antesEnviar();
 
-                inst.ajax.open(inst.metodo, inst.webservice);
+                if (inst.metodo.toUpperCase() === 'GET') {
 
-                console.log('Requisiçao iniciada!');
+                    inst.ajax.open(
+                        inst.metodo,
+                        (
+                            inst.webservice
+                            +((/\?/).test(inst.webservice) ? '&' : '?')
+                            +'b='+inst.termo
+                            +'&pg='+inst.pagina
+                            +'&_='+(new Date).getTime()
+                        )
+                    );
 
-                for (let cab in inst.headers) {
-                    inst.ajax.setRequestHeader(cab, headers[cab]);
+                    for (let cab in inst.headers) {
+                        inst.ajax.setRequestHeader(cab, headers[cab]);
+                    }
+
+                    inst.ajax.send();
+                } else {
+                    //
                 }
-
-                inst.ajax.send();
             } else
                 inst.limpaBusca();
         }
@@ -134,7 +166,9 @@ var LSIBusca = (function(){
 
         this.popula = function(dados)
         {
-            this.render(dados);
+            for (let dado of dados) {
+                this.render(dado);
+            }
         }
 
         this.criarItem = function()

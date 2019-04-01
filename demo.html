@@ -35,13 +35,13 @@
 
         LSIBusca().prep({
             webservice: 'webservice.php',
-            metodo: 'post',
+            metodo: 'get',
             alvo: document.getElementById('buscaAlvo'),
             campo: document.getElementById('inpBusca'),
             atraso: 1000,
             render: function(dados){
                 let resposta = document.createElement('p');
-                resposta.innerHTML = dados;
+                resposta.innerHTML = dados.ClNome;
                 this.criarItem().appendChild(resposta);
             },
             antesEnviar: function(){
