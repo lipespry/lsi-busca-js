@@ -22,13 +22,20 @@
             body {
                 margin: 0;
             }
+            footer {
+                width: 100%;
+                height: 300px;
+                background-color: rgb(230, 180, 180);
+            }
         </style>
     </head>
     <body>
         <input type="text" id="inpBusca">
         <div id="buscaAlvo"></div>
         <div id="lsi-loading"></div>
-
+        <footer>
+            <h2>Rodapé</h2>
+        </footer>
     </body>
     <script>
         var lsiloading = LSILoading('#lsi-loading');
@@ -40,9 +47,16 @@
             campo: document.getElementById('inpBusca'),
             atraso: 1000,
             render: function(dados){
-                let resposta = document.createElement('p');
-                resposta.innerHTML = dados.ClNome;
-                this.criarItem().appendChild(resposta);
+                let nome = document.createElement('p');
+                let cpf = document.createElement('p');
+                let tel1 = document.createElement('p');
+                nome.innerHTML = dados.ClNome;
+                cpf.innerHTML = dados.ClCPF;
+                tel1.innerHTML = dados.ClTel1;
+                this.criarItem()
+                .appendChild(nome)
+                .appendChild(cpf)
+                .appendChild(tel1);
             },
             antesEnviar: function(){
                 lsiloading.mostra();

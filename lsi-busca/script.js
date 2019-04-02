@@ -47,7 +47,19 @@ var LSIBusca = (function(){
                     let resposta = JSON.parse(inst.ajax.responseText);
                     if (resposta.sucesso === true) {
                         inst.paginas = resposta.resultado.paginas;
+
+                        /*if (inst.pagina < inst.paginas)
+                            inst.html.btnMais.style.display = 'block';
+                        else
+                            inst.html.btnMais.style.display = 'none';*/
+
                         inst.popula(resposta.resultado.dados);
+                        setTimeout(function(){
+                            if (
+                                inst.getDocHeight() < inst.getWindowHeight()
+                            )
+                                inst.proxPagina();
+                        }, 1200);
                     } else {
                         // erro
                     }
@@ -65,17 +77,58 @@ var LSIBusca = (function(){
         {
             inst.pagina = 1;
             inst.termo = buscaTermo;
+            inst.html.container.innerHTML = '';
             inst.buscar();
         }
 
         this.proxPagina = function()
         {
             if (inst.pagina < inst.paginas) {
-                inst.pagina++;
                 inst.buscar();
-            } else {
-                // erro
+                /*if (inst.pagina < inst.paginas)
+                    inst.html.btnMais.style.display = 'none';*/
             }
+        }
+
+        this.getDocHeight = function()
+        {
+            return Math.max(
+                //document.body.scrollHeight,
+                //document.body.offsetHeight,
+                //document.documentElement.clientHeight,
+                //document.documentElement.scrollHeight,
+                document.documentElement.offsetHeight
+            );
+        }
+
+        this.getWindowHeight = function()
+        {
+            return window.innerHeight;
+        }
+
+        this.getScrollTop = function()
+        {
+            return document.scrollingElement.scrollTop;
+        }
+
+        this.bindScrollInfinito = function()
+        {
+            document.addEventListener(
+                'scroll',
+                function(){
+                    if (
+                        (
+                            inst.getScrollTop()
+                            +inst.getWindowHeight()
+                        )
+                        === inst.getDocHeight()
+                        && typeof inst.termo != undefined
+                        && typeof inst.pagina != undefined
+                        && typeof inst.paginas != undefined
+                    )
+                        inst.proxPagina();
+                }
+            );
         }
 
         this.prep = function(opcoes)
@@ -123,13 +176,27 @@ var LSIBusca = (function(){
                 false
             );
 
+            /*inst.html.btnMais = document.createElement('button');
+            inst.html.btnMais.setAttribute('type', 'button');
+            inst.html.btnMais.innerText = 'Carregar mais resultados';
+            inst.html.btnMais.style.display = 'none';
+            inst.alvo.appendChild(inst.html.btnMais);
+            inst.html.btnMais.addEventListener(
+                'click',
+                function(){
+                    inst.proxPagina();
+                },
+                false
+            );*/
+            inst.bindScrollInfinito();
+
             return inst;
         }
 
         this.buscar = function()
         {
             if (inst.ajax.readyState !== 0 && inst.ajax.readyState != 4)
-                inst.ajax.abort();
+                return false; //inst.ajax.abort();
 
             if (inst.termo.length >= inst.minlength) {
                 inst.antesEnviar();
@@ -170,6 +237,7 @@ var LSIBusca = (function(){
                         +'&pg='+inst.pagina
                     );
                 }
+                inst.pagina++;
             } else
                 inst.limpaBusca();
         }
@@ -177,6 +245,9 @@ var LSIBusca = (function(){
         this.limpaBusca = function()
         {
             inst.html.container.innerHTML = '';
+            inst.termo = undefined;
+            inst.pagina = undefined;
+            inst.paginas = undefined;
         }
 
         this.popula = function(dados)

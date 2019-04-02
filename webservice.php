@@ -19,7 +19,7 @@ try {
         $pagina = 1;
 
     $termoBusca = $_POST['b'];
-    $limite = 5;
+    $limite = 20;
 
     $pdo = new \PDO(
         'mysql:host=localhost;dbname=teste',
